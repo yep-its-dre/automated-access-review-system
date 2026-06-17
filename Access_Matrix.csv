@@ -1,0 +1,40 @@
+Employee Email,App,Access Level,Last Login
+sarah.mitchell@novacorp.com,Google Workspace,User,2026-06-10
+sarah.mitchell@novacorp.com,Slack,User,2026-06-12
+sarah.mitchell@novacorp.com,Jira,User,2026-06-09
+sarah.mitchell@novacorp.com,GitHub,User,2026-06-11
+sarah.mitchell@novacorp.com,Salesforce,User,2026-06-08
+tom.williams@novacorp.com,Google Workspace,User,2026-06-13
+tom.williams@novacorp.com,Slack,User,2026-06-13
+tom.williams@novacorp.com,Jira,User,2026-06-12
+tom.williams@novacorp.com,Salesforce,User,2026-06-10
+marcus.johnson@novacorp.com,Google Workspace,User,2026-06-14
+marcus.johnson@novacorp.com,Slack,User,2026-06-14
+marcus.johnson@novacorp.com,Salesforce,User,2026-06-13
+marcus.johnson@novacorp.com,Zendesk,User,2026-06-11
+jessica.martinez@novacorp.com,Google Workspace,User,2026-06-12
+jessica.martinez@novacorp.com,Slack,User,2026-06-12
+jessica.martinez@novacorp.com,BambooHR,Admin,2026-06-10
+rachel.chen@novacorp.com,Google Workspace,User,2025-12-01
+rachel.chen@novacorp.com,Slack,User,2026-06-13
+rachel.chen@novacorp.com,QuickBooks,User,2026-06-05
+david.park@novacorp.com,Google Workspace,User,2026-06-15
+david.park@novacorp.com,Slack,User,2026-06-15
+david.park@novacorp.com,Jira,Admin,2026-06-14
+david.park@novacorp.com,GitHub,Admin,2026-06-15
+emily.torres@novacorp.com,Google Workspace,User,2026-06-11
+emily.torres@novacorp.com,Slack,User,2026-06-11
+emily.torres@novacorp.com,Jira,User,2026-06-10
+emily.torres@novacorp.com,Figma,Admin,2026-06-11
+michael.brown@novacorp.com,Google Workspace,User,2026-06-13
+michael.brown@novacorp.com,Slack,User,2026-06-14
+michael.brown@novacorp.com,Jira,Admin,2026-06-13
+michael.brown@novacorp.com,GitHub,Admin,2026-06-12
+michael.brown@novacorp.com,Okta,Admin,2026-06-10
+amanda.foster@novacorp.com,Google Workspace,User,2026-03-15
+amanda.foster@novacorp.com,Salesforce,Admin,2026-03-14
+james.kim@novacorp.com,Google Workspace,Admin,2026-06-15
+james.kim@novacorp.com,Slack,User,2026-06-15
+james.kim@novacorp.com,Jira,Admin,2026-06-14
+james.kim@novacorp.com,GitHub,User,2026-06-13
+james.kim@novacorp.com,Okta,Admin,2026-06-15

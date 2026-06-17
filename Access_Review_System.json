@@ -1,0 +1,426 @@
+{
+  "name": "Access Review system",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f3a5be28-aa6b-43af-8260-b8950776e9c4",
+      "name": "Run Access Review"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA",
+          "mode": "list",
+          "cachedResultName": "Access Review Automated Report",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 995326664,
+          "mode": "list",
+          "cachedResultName": "access-review-tab1-employee-directory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit#gid=995326664"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        240,
+        0
+      ],
+      "id": "03ab259e-9497-4092-8e85-d68e43d8f9ba",
+      "name": "Read Employee Directory",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NUEKhO841RT08yn1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA",
+          "mode": "list",
+          "cachedResultName": "Access Review Automated Report",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1006710461,
+          "mode": "list",
+          "cachedResultName": "access-review-tab2-access-matrix",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit#gid=1006710461"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        496,
+        0
+      ],
+      "id": "9a9605f7-8c56-4bc8-afda-f6c3e862ae97",
+      "name": "Read Access Matrix",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NUEKhO841RT08yn1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pull data from all three Google Sheets reads\n  const employees = $('Read Employee Directory').all().map(item => item.json);\n  const accessRecords = $('Read Access Matrix').all().map(item => item.json);\n  const policies = $('Read Access Policy').all().map(item => item.json);\n\n  const today = new Date();\n  const reviewDate = today.toISOString().split('T')[0];\n  const staleThreshold = 90;\n  const findings = [];\n\n  // Build employee lookup by email\n  const employeeMap = {};\n  for (const emp of employees) {\n    employeeMap[emp.Email] = emp;\n  }\n\n  // Build policy lookup by department + role + app\n  const policyMap = {};\n  for (const pol of policies) {\n    const key = pol.Department + '|' + pol.Role + '|' + pol.App;\n    policyMap[key] = pol['Expected Access'];\n  }\n\n  // Analyze each access record\n  for (const record of accessRecords) {\n    const email = record['Employee Email'];\n    const employee = employeeMap[email];\n    if (!employee) continue;\n\n    const app = record.App;\n    const currentAccess = record['Access Level'];\n    const lastLogin = new Date(record['Last Login']);\n    const daysSinceLogin = Math.floor((today - lastLogin) / (1000 * 60 * 60 * 24));\n    const policyKey = employee.Department + '|' + employee.Role + '|' + app;\n    const expectedAccess = policyMap[policyKey];\n\n    // Check 1: Orphaned account (departed employee still has access)\n    if (employee.Status === 'Departed') {\n      findings.push({\n        'Review Date': reviewDate,\n        'Employee': employee.Name,\n        'Email': email,\n        'Department': employee.Department,\n        'App': app,\n        'Current Access': currentAccess,\n        'Expected Access': 'None (Departed)',\n        'Flag': 'Orphaned Account',\n        'Reviewer': 'Automated',\n        'Action Taken': 'Pending Review',\n        'Action Date': ''\n      });\n      continue;\n    }\n\n    // Check 2: Over-provisioned (has access to app their role should not have)\n    if (expectedAccess === 'None') {\n      findings.push({\n        'Review Date': reviewDate,\n        'Employee': employee.Name,\n        'Email': email,\n        'Department': employee.Department,\n        'App': app,\n        'Current Access': currentAccess,\n        'Expected Access': 'None',\n        'Flag': 'Over-Provisioned',\n        'Reviewer': 'Automated',\n        'Action Taken': 'Pending Review',\n        'Action Date': ''\n      });\n      continue;\n    }\n\n    // Check 3: Elevated access (Admin when policy says User)\n    if (currentAccess === 'Admin' && expectedAccess === 'User') {\n      findings.push({\n        'Review Date': reviewDate,\n        'Employee': employee.Name,\n        'Email': email,\n        'Department': employee.Department,\n        'App': app,\n        'Current Access': 'Admin',\n        'Expected Access': 'User',\n        'Flag': 'Elevated Access',\n        'Reviewer': 'Automated',\n        'Action Taken': 'Pending Review',\n        'Action Date': ''\n      });\n    }\n\n    // Check 4: Stale account (no login in 90+ days)\n    if (daysSinceLogin > staleThreshold) {\n      findings.push({\n        'Review Date': reviewDate,\n        'Employee': employee.Name,\n        'Email': email,\n        'Department': employee.Department,\n        'App': app,\n        'Current Access': currentAccess,\n        'Expected Access': expectedAccess || currentAccess,\n        'Flag': 'Stale Account (' + daysSinceLogin + ' days)',\n        'Reviewer': 'Automated',\n        'Action Taken': 'Pending Review',\n        'Action Date': ''\n      });\n    }\n  }\n\n  return findings.map(f => ({ json: f }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        0
+      ],
+      "id": "0fe04ae3-a114-4695-88e4-e7d39038ccaf",
+      "name": "Compare Access Against Policy"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA",
+          "mode": "list",
+          "cachedResultName": "Access Review Automated Report",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 566753407,
+          "mode": "list",
+          "cachedResultName": "access-review-tab4-review-report",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit#gid=566753407"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Review Date": "={{ $json['Review Date'] }}",
+            "Employee": "={{ $json.Employee }}",
+            "Email": "={{ $json.Email }}",
+            "App": "={{ $json.App }}",
+            "Department": "={{ $json.Department }}",
+            "Current Access": "={{ $json['Current Access'] }}",
+            "Flag": "={{ $json.Flag }}",
+            "Expected Access": "={{ $json['Expected Access'] }}",
+            "Reviewer": "={{ $json.Reviewer }}",
+            "Action Taken": "={{ $json['Action Taken'] }}",
+            "Action Date": "={{ $json['Action Date'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Review Date",
+              "displayName": "Review Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Employee",
+              "displayName": "Employee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "App",
+              "displayName": "App",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Current Access",
+              "displayName": "Current Access",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Expected Access",
+              "displayName": "Expected Access",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Flag",
+              "displayName": "Flag",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reviewer",
+              "displayName": "Reviewer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action Taken",
+              "displayName": "Action Taken",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action Date",
+              "displayName": "Action Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1328,
+        0
+      ],
+      "id": "a308435f-cfba-491d-81d4-00ddfc88be41",
+      "name": "Write Review Findings",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NUEKhO841RT08yn1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const findings = $('Compare Access Against Policy').all().map(item => item.json);\n\n  const orphaned = findings.filter(f => f.Flag === 'Orphaned Account').length;\n  const overProvisioned = findings.filter(f => f.Flag === 'Over-Provisioned').length;\n  const elevated = findings.filter(f => f.Flag === 'Elevated Access').length;\n  const stale = findings.filter(f => f.Flag.startsWith('Stale')).length;\n  const total = findings.length;\n\n  const summary = '*Access Review Completed — ' + new Date().toISOString().split('T')[0] + '*\\n\\n' +\n    '*Findings Summary:*\\n' +\n    '• Orphaned Accounts: ' + orphaned + '\\n' +\n    '• Over-Provisioned: ' + overProvisioned + '\\n' +\n    '• Elevated Access: ' + elevated + '\\n' +\n    '• Stale Accounts (90+ days): ' + stale + '\\n\\n' +\n    '*Total Flags Requiring Action: ' + total + '*\\n\\n' +\n    'Full report available in the Access Review Report tab.';\n\n  return [{ json: { summary: summary } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        0
+      ],
+      "id": "10a6991b-b451-400e-a262-219f315f72c8",
+      "name": "Generate Slack Summary",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0AEDJVRK47",
+          "mode": "list",
+          "cachedResultName": "access-review-alerts"
+        },
+        "text": "={{ $json.summary }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "mrkdwn": true,
+          "unfurl_links": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        1888,
+        0
+      ],
+      "id": "3e3f2e2a-64f9-48c1-841a-3898234600e9",
+      "name": "Post Access Review Alert",
+      "webhookId": "6bce3b09-fc24-458d-b3aa-e52283ef4767",
+      "executeOnce": false,
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "cUVbMuQ0oEm8CZyD",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA",
+          "mode": "list",
+          "cachedResultName": "Access Review Automated Report",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1841422744,
+          "mode": "list",
+          "cachedResultName": "access-review-tab3-access-policy",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit#gid=1841422744"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        768,
+        0
+      ],
+      "id": "4a225871-220e-46cc-ba67-a7d68f4f3caa",
+      "name": "Read Access Policy",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NUEKhO841RT08yn1",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Run Access Review": {
+      "main": [
+        [
+          {
+            "node": "Read Employee Directory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Employee Directory": {
+      "main": [
+        [
+          {
+            "node": "Read Access Matrix",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Access Matrix": {
+      "main": [
+        [
+          {
+            "node": "Read Access Policy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare Access Against Policy": {
+      "main": [
+        [
+          {
+            "node": "Write Review Findings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Review Findings": {
+      "main": [
+        [
+          {
+            "node": "Generate Slack Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Slack Summary": {
+      "main": [
+        [
+          {
+            "node": "Post Access Review Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Access Review Alert": {
+      "main": [
+        []
+      ]
+    },
+    "Read Access Policy": {
+      "main": [
+        [
+          {
+            "node": "Compare Access Against Policy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9d761ce7-4230-4643-8691-1e88e0eee373",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e938452a12f2b449d78518444bf8397e37d550c36d3c5f1be0f70408f6dd1b01"
+  },
+  "id": "GdsKs0jFC0PmTo7S",
+  "tags": []
+}

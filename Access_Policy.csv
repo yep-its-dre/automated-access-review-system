@@ -1,0 +1,51 @@
+Department,Role,App,Expected Access
+Engineering,Engineer,Google Workspace,User
+Engineering,Engineer,Slack,User
+Engineering,Engineer,Jira,User
+Engineering,Engineer,GitHub,User
+Engineering,Engineer,Salesforce,None
+Engineering,Senior Engineer,Google Workspace,User
+Engineering,Senior Engineer,Slack,User
+Engineering,Senior Engineer,Jira,User
+Engineering,Senior Engineer,GitHub,Admin
+Engineering,Senior Engineer,Salesforce,None
+Engineering,Engineering Manager,Google Workspace,User
+Engineering,Engineering Manager,Slack,User
+Engineering,Engineering Manager,Jira,Admin
+Engineering,Engineering Manager,GitHub,Admin
+Engineering,Engineering Manager,Okta,Admin
+Marketing,Marketing Manager,Google Workspace,User
+Marketing,Marketing Manager,Slack,User
+Marketing,Marketing Manager,Jira,User
+Marketing,Marketing Manager,Salesforce,User
+Marketing,Marketing Manager,GitHub,None
+Sales,Account Executive,Google Workspace,User
+Sales,Account Executive,Slack,User
+Sales,Account Executive,Salesforce,User
+Sales,Account Executive,Zendesk,User
+Sales,Account Executive,GitHub,None
+Sales,Sales Director,Google Workspace,User
+Sales,Sales Director,Slack,User
+Sales,Sales Director,Salesforce,Admin
+Sales,Sales Director,Zendesk,Admin
+Sales,Sales Director,GitHub,None
+HR,HR Coordinator,Google Workspace,User
+HR,HR Coordinator,Slack,User
+HR,HR Coordinator,Jira,None
+HR,HR Coordinator,BambooHR,Admin
+HR,HR Coordinator,Okta,None
+Finance,Finance Analyst,Google Workspace,User
+Finance,Finance Analyst,Slack,User
+Finance,Finance Analyst,Jira,None
+Finance,Finance Analyst,QuickBooks,User
+Finance,Finance Analyst,Salesforce,None
+Design,UX Designer,Google Workspace,User
+Design,UX Designer,Slack,User
+Design,UX Designer,Jira,User
+Design,UX Designer,Figma,Admin
+Design,UX Designer,GitHub,None
+IT,IT Analyst,Google Workspace,Admin
+IT,IT Analyst,Slack,User
+IT,IT Analyst,Jira,Admin
+IT,IT Analyst,GitHub,User
+IT,IT Analyst,Okta,Admin
