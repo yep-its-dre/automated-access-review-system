@@ -16,17 +16,15 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA",
+          "value": "REPLACE_WITH_GOOGLE_SHEET_ID",
           "mode": "list",
-          "cachedResultName": "Access Review Automated Report",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit?usp=drivesdk"
+          "cachedResultName": "Access Review Automated Report"
         },
         "sheetName": {
           "__rl": true,
           "value": 995326664,
           "mode": "list",
-          "cachedResultName": "access-review-tab1-employee-directory",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit#gid=995326664"
+          "cachedResultName": "access-review-tab1-employee-directory"
         },
         "options": {}
       },
@@ -40,8 +38,8 @@
       "name": "Read Employee Directory",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "NUEKhO841RT08yn1",
-          "name": "Google Sheets account"
+          "id": "",
+          "name": ""
         }
       }
     },
@@ -49,17 +47,15 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA",
+          "value": "REPLACE_WITH_GOOGLE_SHEET_ID",
           "mode": "list",
-          "cachedResultName": "Access Review Automated Report",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit?usp=drivesdk"
+          "cachedResultName": "Access Review Automated Report"
         },
         "sheetName": {
           "__rl": true,
           "value": 1006710461,
           "mode": "list",
-          "cachedResultName": "access-review-tab2-access-matrix",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit#gid=1006710461"
+          "cachedResultName": "access-review-tab2-access-matrix"
         },
         "options": {}
       },
@@ -73,8 +69,8 @@
       "name": "Read Access Matrix",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "NUEKhO841RT08yn1",
-          "name": "Google Sheets account"
+          "id": "",
+          "name": ""
         }
       }
     },
@@ -96,17 +92,15 @@
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA",
+          "value": "REPLACE_WITH_GOOGLE_SHEET_ID",
           "mode": "list",
-          "cachedResultName": "Access Review Automated Report",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit?usp=drivesdk"
+          "cachedResultName": "Access Review Automated Report"
         },
         "sheetName": {
           "__rl": true,
           "value": 566753407,
           "mode": "list",
-          "cachedResultName": "access-review-tab4-review-report",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit#gid=566753407"
+          "cachedResultName": "access-review-tab4-review-report"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -240,8 +234,8 @@
       "name": "Write Review Findings",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "NUEKhO841RT08yn1",
-          "name": "Google Sheets account"
+          "id": "",
+          "name": ""
         }
       }
     },
@@ -265,7 +259,7 @@
         "select": "channel",
         "channelId": {
           "__rl": true,
-          "value": "C0AEDJVRK47",
+          "value": "REPLACE_WITH_SLACK_CHANNEL_ID",
           "mode": "list",
           "cachedResultName": "access-review-alerts"
         },
@@ -284,12 +278,11 @@
       ],
       "id": "3e3f2e2a-64f9-48c1-841a-3898234600e9",
       "name": "Post Access Review Alert",
-      "webhookId": "6bce3b09-fc24-458d-b3aa-e52283ef4767",
       "executeOnce": false,
       "credentials": {
         "slackOAuth2Api": {
-          "id": "cUVbMuQ0oEm8CZyD",
-          "name": "Slack account"
+          "id": "",
+          "name": ""
         }
       }
     },
@@ -297,17 +290,15 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA",
+          "value": "REPLACE_WITH_GOOGLE_SHEET_ID",
           "mode": "list",
-          "cachedResultName": "Access Review Automated Report",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit?usp=drivesdk"
+          "cachedResultName": "Access Review Automated Report"
         },
         "sheetName": {
           "__rl": true,
           "value": 1841422744,
           "mode": "list",
-          "cachedResultName": "access-review-tab3-access-policy",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VmhiMUfQ9YoUkjMcu8vmvq2V1zHO4APYjVZcXlJskJA/edit#gid=1841422744"
+          "cachedResultName": "access-review-tab3-access-policy"
         },
         "options": {}
       },
@@ -321,8 +312,8 @@
       "name": "Read Access Policy",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "NUEKhO841RT08yn1",
-          "name": "Google Sheets account"
+          "id": "",
+          "name": ""
         }
       }
     }
@@ -418,9 +409,8 @@
   },
   "versionId": "9d761ce7-4230-4643-8691-1e88e0eee373",
   "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "e938452a12f2b449d78518444bf8397e37d550c36d3c5f1be0f70408f6dd1b01"
+    "templateCredsSetupCompleted": true
   },
-  "id": "GdsKs0jFC0PmTo7S",
+  "id": "",
   "tags": []
 }
